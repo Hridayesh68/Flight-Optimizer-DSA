@@ -13,7 +13,7 @@ const MyTrips = () => {
         const fetchTrips = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const res = await axios.get('http://localhost:5000/api/trips', config);
+                const res = await axios.get('/api/getSavedFlights', config);
                 setTrips(res.data);
             } catch (err) {
                 console.error("Failed to fetch trips", err);

@@ -1,3 +1,0 @@
-Graph built successfully with 315 nodes and 3960 total edges.
-[Perf] Dijkstra Time: 1.488ms (Visited: 156)
-[Perf] A* Time: 0.667ms (Visited: 2)
