@@ -39,15 +39,14 @@ const AirportSearchDropdown = ({ label, airports, selectedCode, onSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Fast local fuzzy finding
-    const safeAirports = Array.isArray(airports) ? airports : [];
-    const filteredAirports = safeAirports.filter(a => {
+    const filteredAirports = airports.filter(a => {
         const query = searchQuery.toLowerCase();
         return (a.city && a.city.toLowerCase().includes(query)) ||
             (a.name && a.name.toLowerCase().includes(query)) ||
             (a.code && a.code.toLowerCase().includes(query));
     }).slice(0, 50); // Hard UI cap for performance
 
-    const selectedAirport = safeAirports.find(a => a.code === selectedCode);
+    const selectedAirport = airports.find(a => a.code === selectedCode);
 
     return (
         <div className="flex flex-col space-y-1 relative z-50">
@@ -117,19 +116,17 @@ const FlightSearchBox = () => {
     useEffect(() => {
         const fetchGraphAirports = async () => {
             try {
-                const response = await axios.get('/api/graph/airports');
-                if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                const response = await axios.get('http://localhost:5000/api/graph/airports');
+                if (response.data && response.data.length > 0) {
                     setAirportsList(response.data);
                     // Optionally reset origin/destination if the current ones don't exist
                     const defaultOrig = response.data.find(a => a.code === 'DEL') || response.data[0];
                     const defaultDest = response.data.find(a => a.code === 'LHR') || response.data[1] || response.data[0];
                     setOrigin(defaultOrig.code);
                     setDestination(defaultDest.code);
-                } else {
-                    throw new Error('API returned non-array data. Are Vercel Serverless functions running?');
                 }
             } catch (err) {
-                console.warn('Could not fetch dynamic airports, falling back to local list.', err.message);
+                console.warn('Could not fetch dynamic airports, falling back to local list.', err);
             }
         };
         fetchGraphAirports();
@@ -146,7 +143,7 @@ const FlightSearchBox = () => {
         setVisualizedRoute(null);
 
         try {
-            const response = await axios.post('/api/route', {
+            const response = await axios.post('http://localhost:5000/api/route', {
                 origin,
                 destination,
                 algorithm,

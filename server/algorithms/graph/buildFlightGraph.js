@@ -1,6 +1,6 @@
-import aviationService from '../services/aviationService.js';
-import airportsData from '../data/airports.json' assert { type: 'json' };
-import flightsFallback from '../data/flights.json' assert { type: 'json' };
+const aviationService = require('../../services/aviationService');
+const airportsData = require('../../data/airports.json');
+const flightsFallback = require('../../data/flights.json');
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the Earth in km
@@ -194,4 +194,4 @@ class FlightGraph {
 }
 
 const flightGraphInstance = new FlightGraph();
-export default flightGraphInstance;
+module.exports = flightGraphInstance;

@@ -1,4 +1,4 @@
-import axios from 'axios';
+const axios = require('axios');
 
 // Simple in-memory cache
 const cache = new Map();
@@ -85,4 +85,4 @@ const aviationService = {
     }
 };
 
-export default aviationService;
+module.exports = aviationService;
