@@ -245,12 +245,12 @@ const FlightSearchBox = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col space-y-1">
+                <div className="flex flex-col space-y-1 relative group">
                     <label className="text-gray-500 font-bold text-xs uppercase tracking-wider">Routing Algorithm</label>
                     <select
                         value={algorithm}
                         onChange={(e) => setAlgorithm(e.target.value)}
-                        className="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 block p-2.5 w-full"
+                        className="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 block p-2.5 w-full appearance-none"
                     >
                         <option value="dijkstra">Dijkstra's Algorithm</option>
                         <option value="astar">A* (Heuristic Guided)</option>
@@ -258,6 +258,49 @@ const FlightSearchBox = () => {
                         <option value="dfs">DFS (Any Route)</option>
                         <option value="compare">Compare All Algorithms</option>
                     </select>
+
+                    {/* Tooltip on Hover */}
+                    <div className="hidden group-hover:block absolute z-50 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg -top-1 right-0 translate-x-[105%] pointer-events-none">
+                        {algorithm === 'dijkstra' && (
+                            <>
+                                <p className="font-bold text-sm mb-1 text-blue-300">Dijkstra's Algorithm</p>
+                                <p className="mb-2 text-gray-300">Finds shortest weighted path between nodes.</p>
+                                <p><strong className="text-blue-200">Time:</strong> O(V² / E + V log V)</p>
+                                <p><strong className="text-blue-200">Use Case:</strong> Best for graphs with no negative edges.</p>
+                            </>
+                        )}
+                        {algorithm === 'astar' && (
+                            <>
+                                <p className="font-bold text-sm mb-1 text-green-300">A* Algorithm</p>
+                                <p className="mb-2 text-gray-300">Uses spatial heuristics to guide search directly towards target.</p>
+                                <p><strong className="text-green-200">Time:</strong> Typically O(E)</p>
+                                <p><strong className="text-green-200">Use Case:</strong> Best for physical coordinate-based networking (Airports).</p>
+                            </>
+                        )}
+                        {algorithm === 'bfs' && (
+                            <>
+                                <p className="font-bold text-sm mb-1 text-orange-300">Breadth First Search</p>
+                                <p className="mb-2 text-gray-300">Explores all neighbors before moving deeper.</p>
+                                <p><strong className="text-orange-200">Time:</strong> O(V + E)</p>
+                                <p><strong className="text-orange-200">Use Case:</strong> Best for finding paths with the absolute minimum layovers.</p>
+                            </>
+                        )}
+                        {algorithm === 'dfs' && (
+                            <>
+                                <p className="font-bold text-sm mb-1 text-gray-300">Depth First Search</p>
+                                <p className="mb-2 text-gray-400">Explores as far as possible along branches before backtracking.</p>
+                                <p><strong className="text-gray-200">Time:</strong> O(V + E)</p>
+                                <p><strong className="text-gray-200">Use Case:</strong> Best for validating if *any* path exists quickly.</p>
+                            </>
+                        )}
+                        {algorithm === 'compare' && (
+                            <>
+                                <p className="font-bold text-sm mb-1 text-purple-300">Algorithm Race Mode</p>
+                                <p className="text-gray-300">Runs Dijkstra, A*, BFS, and DFS concurrently to compare their speed, layovers, and evaluated nodes.</p>
+                            </>
+                        )}
+                        <div className="absolute top-4 -left-1.5 w-3 h-3 bg-gray-900 rotate-45"></div>
+                    </div>
                 </div>
             </div>
 

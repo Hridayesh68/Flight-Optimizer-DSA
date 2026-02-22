@@ -22,6 +22,7 @@ app.get('/api/health', (req, res) => {
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/trips', require('./routes/tripRoutes'));
 app.use('/api', require('./routes/algorithmRoutes'));
 
 // Error Handler
