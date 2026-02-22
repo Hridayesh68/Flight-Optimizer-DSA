@@ -1,0 +1,242 @@
+[
+    {
+        "source": "JFK",
+        "target": "LHR",
+        "distance_km": 5540,
+        "duration_min": 420,
+        "price_usd": 450,
+        "airline": "British Airways"
+    },
+    {
+        "source": "JFK",
+        "target": "CDG",
+        "distance_km": 5836,
+        "duration_min": 440,
+        "price_usd": 500,
+        "airline": "Air France"
+    },
+    {
+        "source": "JFK",
+        "target": "FRA",
+        "distance_km": 6200,
+        "duration_min": 460,
+        "price_usd": 550,
+        "airline": "Lufthansa"
+    },
+    {
+        "source": "JFK",
+        "target": "LAX",
+        "distance_km": 3975,
+        "duration_min": 360,
+        "price_usd": 250,
+        "airline": "Delta"
+    },
+    {
+        "source": "JFK",
+        "target": "SFO",
+        "distance_km": 4150,
+        "duration_min": 380,
+        "price_usd": 280,
+        "airline": "United"
+    },
+    {
+        "source": "LAX",
+        "target": "SFO",
+        "distance_km": 540,
+        "duration_min": 90,
+        "price_usd": 120,
+        "airline": "Southwest"
+    },
+    {
+        "source": "LAX",
+        "target": "HND",
+        "distance_km": 8810,
+        "duration_min": 690,
+        "price_usd": 850,
+        "airline": "ANA"
+    },
+    {
+        "source": "LAX",
+        "target": "SYD",
+        "distance_km": 12050,
+        "duration_min": 900,
+        "price_usd": 1100,
+        "airline": "Qantas"
+    },
+    {
+        "source": "SFO",
+        "target": "HND",
+        "distance_km": 8285,
+        "duration_min": 660,
+        "price_usd": 800,
+        "airline": "JAL"
+    },
+    {
+        "source": "LHR",
+        "target": "DXB",
+        "distance_km": 5470,
+        "duration_min": 410,
+        "price_usd": 400,
+        "airline": "Emirates"
+    },
+    {
+        "source": "LHR",
+        "target": "CDG",
+        "distance_km": 344,
+        "duration_min": 75,
+        "price_usd": 100,
+        "airline": "British Airways"
+    },
+    {
+        "source": "LHR",
+        "target": "FRA",
+        "distance_km": 655,
+        "duration_min": 95,
+        "price_usd": 120,
+        "airline": "Lufthansa"
+    },
+    {
+        "source": "CDG",
+        "target": "DXB",
+        "distance_km": 5240,
+        "duration_min": 390,
+        "price_usd": 420,
+        "airline": "Air France"
+    },
+    {
+        "source": "FRA",
+        "target": "DXB",
+        "distance_km": 4840,
+        "duration_min": 370,
+        "price_usd": 380,
+        "airline": "Lufthansa"
+    },
+    {
+        "source": "DXB",
+        "target": "DEL",
+        "distance_km": 2180,
+        "duration_min": 190,
+        "price_usd": 200,
+        "airline": "Emirates"
+    },
+    {
+        "source": "DXB",
+        "target": "BOM",
+        "distance_km": 1920,
+        "duration_min": 180,
+        "price_usd": 180,
+        "airline": "FlyDubai"
+    },
+    {
+        "source": "DXB",
+        "target": "SIN",
+        "distance_km": 5830,
+        "duration_min": 450,
+        "price_usd": 500,
+        "airline": "Emirates"
+    },
+    {
+        "source": "DEL",
+        "target": "BOM",
+        "distance_km": 1150,
+        "duration_min": 130,
+        "price_usd": 90,
+        "airline": "IndiGo"
+    },
+    {
+        "source": "DEL",
+        "target": "SIN",
+        "distance_km": 4150,
+        "duration_min": 340,
+        "price_usd": 300,
+        "airline": "Air India"
+    },
+    {
+        "source": "DEL",
+        "target": "LHR",
+        "distance_km": 6700,
+        "duration_min": 570,
+        "price_usd": 600,
+        "airline": "British Airways"
+    },
+    {
+        "source": "BOM",
+        "target": "SIN",
+        "distance_km": 3900,
+        "duration_min": 320,
+        "price_usd": 280,
+        "airline": "Singapore Airlines"
+    },
+    {
+        "source": "BOM",
+        "target": "LHR",
+        "distance_km": 7200,
+        "duration_min": 600,
+        "price_usd": 650,
+        "airline": "Air India"
+    },
+    {
+        "source": "SIN",
+        "target": "SYD",
+        "distance_km": 6300,
+        "duration_min": 460,
+        "price_usd": 550,
+        "airline": "Singapore Airlines"
+    },
+    {
+        "source": "SIN",
+        "target": "HND",
+        "distance_km": 5300,
+        "duration_min": 420,
+        "price_usd": 450,
+        "airline": "ANA"
+    },
+    {
+        "source": "HND",
+        "target": "SYD",
+        "distance_km": 7820,
+        "duration_min": 580,
+        "price_usd": 700,
+        "airline": "Qantas"
+    },
+    {
+        "source": "YYZ",
+        "target": "LHR",
+        "distance_km": 5700,
+        "duration_min": 430,
+        "price_usd": 480,
+        "airline": "Air Canada"
+    },
+    {
+        "source": "YYZ",
+        "target": "JFK",
+        "distance_km": 590,
+        "duration_min": 100,
+        "price_usd": 150,
+        "airline": "Delta"
+    },
+    {
+        "source": "GRU",
+        "target": "JFK",
+        "distance_km": 7650,
+        "duration_min": 590,
+        "price_usd": 700,
+        "airline": "LATAM"
+    },
+    {
+        "source": "GRU",
+        "target": "LHR",
+        "distance_km": 9400,
+        "duration_min": 700,
+        "price_usd": 850,
+        "airline": "British Airways"
+    },
+    {
+        "source": "GRU",
+        "target": "CDG",
+        "distance_km": 9400,
+        "duration_min": 710,
+        "price_usd": 860,
+        "airline": "Air France"
+    }
+]
