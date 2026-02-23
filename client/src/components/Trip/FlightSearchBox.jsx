@@ -34,17 +34,49 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
-const AirportSearchDropdown = ({ label, airports, selectedCode, onSelect }) => {
+const AirportSearchDropdown = ({ label, airports, selectedCode, onSelect, isLoading }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
 
-    // Fast local fuzzy finding
-    const filteredAirports = airports.filter(a => {
-        const query = searchQuery.toLowerCase();
-        return (a.city && a.city.toLowerCase().includes(query)) ||
-            (a.name && a.name.toLowerCase().includes(query)) ||
-            (a.code && a.code.toLowerCase().includes(query));
-    }).slice(0, 50); // Hard UI cap for performance
+    // Filter, deduplicate, and sort
+    const filteredAirports = React.useMemo(() => {
+        if (!airports) return [];
+
+        let filtered = airports;
+
+        // Deduplicate using Map by code
+        const map = new Map();
+        filtered.forEach(a => map.set(a.code, a));
+        filtered = Array.from(map.values());
+
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(a =>
+                (a.city && a.city.toLowerCase().includes(query)) ||
+                (a.name && a.name.toLowerCase().includes(query)) ||
+                (a.code && a.code.toLowerCase().includes(query)) ||
+                (a.country && a.country.toLowerCase().includes(query)) ||
+                (a.state && a.state.toLowerCase().includes(query))
+            );
+        }
+
+        // Sort: India first, then by city name
+        filtered.sort((a, b) => {
+            const aIsIndia = a.country === 'India';
+            const bIsIndia = b.country === 'India';
+
+            if (aIsIndia && !bIsIndia) return -1;
+            if (!aIsIndia && bIsIndia) return 1;
+
+            // Further tie-breaking by city name safely
+            const cityA = a.city || '';
+            const cityB = b.city || '';
+            return cityA.localeCompare(cityB);
+        });
+
+        // Limit results to 150 to prevent render lag but large enough to look complete
+        return filtered.slice(0, 150);
+    }, [airports, searchQuery]);
 
     const selectedAirport = airports.find(a => a.code === selectedCode);
 
@@ -52,45 +84,56 @@ const AirportSearchDropdown = ({ label, airports, selectedCode, onSelect }) => {
         <div className="flex flex-col space-y-1 relative z-50">
             <label className="text-gray-500 font-bold text-xs uppercase tracking-wider">{label}</label>
             <div
-                className="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-3 w-full cursor-text"
+                className="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-3 w-full cursor-text relative"
                 onClick={() => setIsOpen(true)}
             >
                 {!isOpen ? (
                     <div className="flex flex-col">
-                        <span className="font-bold">{selectedAirport?.name || 'Select Airport'} ({selectedCode})</span>
-                        <span className="text-sm text-gray-500">{selectedAirport?.city || ''}{selectedAirport?.country ? `, ${selectedAirport.country}` : ''}</span>
+                        <span className="font-bold text-lg">{selectedAirport?.city || 'Select City'}</span>
+                        <span className="text-sm text-gray-500">{selectedAirport?.name || 'Select Airport'} ({selectedCode || '...'})</span>
                     </div>
                 ) : (
                     <input
                         type="text"
                         autoFocus
-                        className="w-full bg-transparent outline-none p-1"
+                        className="w-full bg-transparent outline-none p-1 font-bold text-lg"
                         placeholder="Search City, Name, or IATA code..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
                     />
                 )}
+                {isLoading && (
+                    <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                        <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                )}
             </div>
 
             {isOpen && (
-                <ul className="absolute z-50 w-full mt-[68px] bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-y-auto">
+                <ul className="absolute z-50 w-full mt-[72px] bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-y-auto">
                     {filteredAirports.map(apt => (
                         <li
                             key={`search-${apt.code}`}
-                            className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-0"
+                            className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-0 flex flex-col"
                             onClick={() => {
                                 onSelect(apt.code);
                                 setIsOpen(false);
                                 setSearchQuery('');
                             }}
                         >
-                            <div className="font-bold text-gray-800">{apt.name} <span className="text-blue-600">({apt.code})</span></div>
-                            <div className="text-sm text-gray-500">{apt.city}{apt.country ? `, ${apt.country}` : ''}</div>
+                            <span className="font-bold text-gray-800">{apt.city} {apt.state ? `, ${apt.state}` : (apt.country ? `, ${apt.country}` : '')}</span>
+                            <span className="text-sm text-gray-500">{apt.name} <span className="text-blue-600 font-mono">({apt.code})</span></span>
                         </li>
                     ))}
-                    {filteredAirports.length === 0 && (
-                        <li className="p-3 text-gray-500 text-sm">No airports found...</li>
+                    {filteredAirports.length === 0 && !isLoading && (
+                        <li className="p-3 text-gray-500 text-sm font-medium">No airports found...</li>
+                    )}
+                    {isLoading && (
+                        <li className="p-3 text-blue-500 text-sm flex items-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span>Loading airports...</span>
+                        </li>
                     )}
                 </ul>
             )}
@@ -112,6 +155,7 @@ const FlightSearchBox = () => {
     const [isCalculating, setIsCalculating] = useState(false);
     const [localMetrics, setLocalMetrics] = useState(null);
     const [airportsList, setAirportsList] = useState(AIRPORTS);
+    const [isLoadingAirports, setIsLoadingAirports] = useState(true);
 
     useEffect(() => {
         const fetchGraphAirports = async () => {
@@ -121,12 +165,15 @@ const FlightSearchBox = () => {
                     setAirportsList(response.data);
                     // Optionally reset origin/destination if the current ones don't exist
                     const defaultOrig = response.data.find(a => a.code === 'DEL') || response.data[0];
-                    const defaultDest = response.data.find(a => a.code === 'LHR') || response.data[1] || response.data[0];
+                    const defaultDest = response.data.find(a => a.code === 'JFK') || response.data[1] || response.data[0];
                     setOrigin(defaultOrig.code);
                     setDestination(defaultDest.code);
                 }
             } catch (err) {
                 console.warn('Could not fetch dynamic airports, falling back to local list.', err);
+                setAirportsList(AIRPORTS);
+            } finally {
+                setIsLoadingAirports(false);
             }
         };
         fetchGraphAirports();
@@ -209,6 +256,7 @@ const FlightSearchBox = () => {
                     airports={airportsList}
                     selectedCode={origin}
                     onSelect={setOrigin}
+                    isLoading={isLoadingAirports}
                 />
 
                 <AirportSearchDropdown
@@ -216,6 +264,7 @@ const FlightSearchBox = () => {
                     airports={airportsList}
                     selectedCode={destination}
                     onSelect={setDestination}
+                    isLoading={isLoadingAirports}
                 />
             </div>
 

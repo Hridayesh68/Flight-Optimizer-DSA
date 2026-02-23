@@ -1,8 +1,279 @@
 [
     {
+        "code": "DEL",
+        "name": "Indira Gandhi International",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "country": "India",
+        "lat": 28.5562,
+        "lng": 77.1000
+    },
+    {
+        "code": "BOM",
+        "name": "Chhatrapati Shivaji Maharaj International",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "country": "India",
+        "lat": 19.0896,
+        "lng": 72.8656
+    },
+    {
+        "code": "BLR",
+        "name": "Kempegowda International",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "country": "India",
+        "lat": 13.1986,
+        "lng": 77.7066
+    },
+    {
+        "code": "HYD",
+        "name": "Rajiv Gandhi International",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "country": "India",
+        "lat": 17.2403,
+        "lng": 78.4294
+    },
+    {
+        "code": "MAA",
+        "name": "Chennai International",
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "country": "India",
+        "lat": 12.9941,
+        "lng": 80.1709
+    },
+    {
+        "code": "CCU",
+        "name": "Netaji Subhash Chandra Bose International",
+        "city": "Kolkata",
+        "state": "West Bengal",
+        "country": "India",
+        "lat": 22.6520,
+        "lng": 88.4463
+    },
+    {
+        "code": "AMD",
+        "name": "Sardar Vallabhbhai Patel International",
+        "city": "Ahmedabad",
+        "state": "Gujarat",
+        "country": "India",
+        "lat": 23.0772,
+        "lng": 72.6347
+    },
+    {
+        "code": "PNQ",
+        "name": "Pune Space",
+        "city": "Pune",
+        "state": "Maharashtra",
+        "country": "India",
+        "lat": 18.5822,
+        "lng": 73.9197
+    },
+    {
+        "code": "JAI",
+        "name": "Jaipur International",
+        "city": "Jaipur",
+        "state": "Rajasthan",
+        "country": "India",
+        "lat": 26.8242,
+        "lng": 75.8122
+    },
+    {
+        "code": "LKO",
+        "name": "Chaudhary Charan Singh International",
+        "city": "Lucknow",
+        "state": "Uttar Pradesh",
+        "country": "India",
+        "lat": 26.7606,
+        "lng": 80.8893
+    },
+    {
+        "code": "COK",
+        "name": "Cochin International",
+        "city": "Kochi",
+        "state": "Kerala",
+        "country": "India",
+        "lat": 10.1518,
+        "lng": 76.3930
+    },
+    {
+        "code": "GOI",
+        "name": "Dabolim",
+        "city": "Goa",
+        "state": "Goa",
+        "country": "India",
+        "lat": 15.3808,
+        "lng": 73.8313
+    },
+    {
+        "code": "GOX",
+        "name": "Manohar International",
+        "city": "Mopa",
+        "state": "Goa",
+        "country": "India",
+        "lat": 15.7311,
+        "lng": 73.8642
+    },
+    {
+        "code": "TRV",
+        "name": "Trivandrum International",
+        "city": "Thiruvananthapuram",
+        "state": "Kerala",
+        "country": "India",
+        "lat": 8.4821,
+        "lng": 76.9201
+    },
+    {
+        "code": "CCJ",
+        "name": "Calicut International",
+        "city": "Kozhikode",
+        "state": "Kerala",
+        "country": "India",
+        "lat": 11.1368,
+        "lng": 75.9553
+    },
+    {
+        "code": "ATQ",
+        "name": "Sri Guru Ram Dass Jee International",
+        "city": "Amritsar",
+        "state": "Punjab",
+        "country": "India",
+        "lat": 31.7096,
+        "lng": 74.7973
+    },
+    {
+        "code": "GAU",
+        "name": "Lokpriya Gopinath Bordoloi International",
+        "city": "Guwahati",
+        "state": "Assam",
+        "country": "India",
+        "lat": 26.1061,
+        "lng": 91.5859
+    },
+    {
+        "code": "BBI",
+        "name": "Biju Patnaik International",
+        "city": "Bhubaneswar",
+        "state": "Odisha",
+        "country": "India",
+        "lat": 20.2444,
+        "lng": 85.8178
+    },
+    {
+        "code": "PAT",
+        "name": "Jay Prakash Narayan International",
+        "city": "Patna",
+        "state": "Bihar",
+        "country": "India",
+        "lat": 25.5913,
+        "lng": 85.0881
+    },
+    {
+        "code": "IND",
+        "name": "Devi Ahilya Bai Holkar",
+        "city": "Indore",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "lat": 22.7214,
+        "lng": 75.8011
+    },
+    {
+        "code": "NAG",
+        "name": "Dr. Babasaheb Ambedkar International",
+        "city": "Nagpur",
+        "state": "Maharashtra",
+        "country": "India",
+        "lat": 21.0922,
+        "lng": 79.0472
+    },
+    {
+        "code": "IXC",
+        "name": "Shaheed Bhagat Singh International",
+        "city": "Chandigarh",
+        "state": "Chandigarh",
+        "country": "India",
+        "lat": 30.6738,
+        "lng": 76.7885
+    },
+    {
+        "code": "VNS",
+        "name": "Lal Bahadur Shastri International",
+        "city": "Varanasi",
+        "state": "Uttar Pradesh",
+        "country": "India",
+        "lat": 25.4520,
+        "lng": 82.8587
+    },
+    {
+        "code": "SXR",
+        "name": "Sheikh ul-Alam International",
+        "city": "Srinagar",
+        "state": "Jammu and Kashmir",
+        "country": "India",
+        "lat": 33.9870,
+        "lng": 74.7744
+    },
+    {
+        "code": "IXB",
+        "name": "Bagdogra International",
+        "city": "Bagdogra",
+        "state": "West Bengal",
+        "country": "India",
+        "lat": 26.6812,
+        "lng": 88.3286
+    },
+    {
+        "code": "CNN",
+        "name": "Kannur International",
+        "city": "Kannur",
+        "state": "Kerala",
+        "country": "India",
+        "lat": 11.9167,
+        "lng": 75.5492
+    },
+    {
+        "code": "VTZ",
+        "name": "Visakhapatnam International",
+        "city": "Visakhapatnam",
+        "state": "Andhra Pradesh",
+        "country": "India",
+        "lat": 17.7211,
+        "lng": 83.2245
+    },
+    {
+        "code": "JDH",
+        "name": "Jodhpur",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "lat": 26.2625,
+        "lng": 73.0487
+    },
+    {
+        "code": "BDQ",
+        "name": "Vadodara",
+        "city": "Vadodara",
+        "state": "Gujarat",
+        "country": "India",
+        "lat": 22.3361,
+        "lng": 73.2263
+    },
+    {
+        "code": "IXZ",
+        "name": "Veer Savarkar International",
+        "city": "Port Blair",
+        "state": "Andaman and Nicobar Islands",
+        "country": "India",
+        "lat": 11.6410,
+        "lng": 92.7297
+    },
+    {
         "code": "JFK",
         "name": "John F. Kennedy International",
         "city": "New York",
+        "state": "New York",
         "country": "USA",
         "lat": 40.6413,
         "lng": -73.7781
@@ -40,22 +311,6 @@
         "lng": 55.3657
     },
     {
-        "code": "DEL",
-        "name": "Indira Gandhi International",
-        "city": "Delhi",
-        "country": "India",
-        "lat": 28.5562,
-        "lng": 77.1000
-    },
-    {
-        "code": "BOM",
-        "name": "Chhatrapati Shivaji",
-        "city": "Mumbai",
-        "country": "India",
-        "lat": 19.0896,
-        "lng": 72.8656
-    },
-    {
         "code": "SIN",
         "name": "Changi",
         "city": "Singapore",
@@ -91,6 +346,7 @@
         "code": "LAX",
         "name": "Los Angeles International",
         "city": "Los Angeles",
+        "state": "California",
         "country": "USA",
         "lat": 33.9416,
         "lng": -118.4085
@@ -99,6 +355,7 @@
         "code": "SFO",
         "name": "San Francisco International",
         "city": "San Francisco",
+        "state": "California",
         "country": "USA",
         "lat": 37.6213,
         "lng": -122.3790
@@ -107,6 +364,7 @@
         "code": "YYZ",
         "name": "Toronto Pearson",
         "city": "Toronto",
+        "state": "Ontario",
         "country": "Canada",
         "lat": 43.6777,
         "lng": -79.6248
@@ -118,5 +376,135 @@
         "country": "Brazil",
         "lat": -23.4356,
         "lng": -46.4731
+    },
+    {
+        "code": "ORD",
+        "name": "O'Hare International",
+        "city": "Chicago",
+        "state": "Illinois",
+        "country": "USA",
+        "lat": 41.9742,
+        "lng": -87.9073
+    },
+    {
+        "code": "ATL",
+        "name": "Hartsfield-Jackson Atlanta International",
+        "city": "Atlanta",
+        "state": "Georgia",
+        "country": "USA",
+        "lat": 33.6407,
+        "lng": -84.4277
+    },
+    {
+        "code": "PEK",
+        "name": "Beijing Capital International",
+        "city": "Beijing",
+        "country": "China",
+        "lat": 40.0799,
+        "lng": 116.6031
+    },
+    {
+        "code": "HKG",
+        "name": "Hong Kong International",
+        "city": "Hong Kong",
+        "country": "Hong Kong",
+        "lat": 22.3080,
+        "lng": 113.9185
+    },
+    {
+        "code": "AMS",
+        "name": "Amsterdam Airport Schiphol",
+        "city": "Amsterdam",
+        "country": "Netherlands",
+        "lat": 52.3105,
+        "lng": 4.7683
+    },
+    {
+        "code": "IST",
+        "name": "Istanbul",
+        "city": "Istanbul",
+        "country": "Turkey",
+        "lat": 41.2753,
+        "lng": 28.7519
+    },
+    {
+        "code": "MAD",
+        "name": "Adolfo Suárez Madrid–Barajas",
+        "city": "Madrid",
+        "country": "Spain",
+        "lat": 40.4983,
+        "lng": -3.5676
+    },
+    {
+        "code": "DOH",
+        "name": "Hamad International",
+        "city": "Doha",
+        "country": "Qatar",
+        "lat": 25.2731,
+        "lng": 51.6080
+    },
+    {
+        "code": "AUH",
+        "name": "Zayed International",
+        "city": "Abu Dhabi",
+        "country": "UAE",
+        "lat": 24.4330,
+        "lng": 54.6511
+    },
+    {
+        "code": "KUL",
+        "name": "Kuala Lumpur International",
+        "city": "Kuala Lumpur",
+        "country": "Malaysia",
+        "lat": 2.7456,
+        "lng": 101.7099
+    },
+    {
+        "code": "ICN",
+        "name": "Incheon International",
+        "city": "Seoul",
+        "country": "South Korea",
+        "lat": 37.4602,
+        "lng": 126.4407
+    },
+    {
+        "code": "MEX",
+        "name": "Mexico City International",
+        "city": "Mexico City",
+        "country": "Mexico",
+        "lat": 19.4361,
+        "lng": -99.0719
+    },
+    {
+        "code": "EZE",
+        "name": "Ministro Pistarini International",
+        "city": "Buenos Aires",
+        "country": "Argentina",
+        "lat": -34.8122,
+        "lng": -58.5398
+    },
+    {
+        "code": "CPT",
+        "name": "Cape Town International",
+        "city": "Cape Town",
+        "country": "South Africa",
+        "lat": -33.9715,
+        "lng": 18.6021
+    },
+    {
+        "code": "JNB",
+        "name": "O. R. Tambo International",
+        "city": "Johannesburg",
+        "country": "South Africa",
+        "lat": -26.1367,
+        "lng": 28.2411
+    },
+    {
+        "code": "NRT",
+        "name": "Narita International",
+        "city": "Tokyo",
+        "country": "Japan",
+        "lat": 35.7720,
+        "lng": 140.3929
     }
 ]

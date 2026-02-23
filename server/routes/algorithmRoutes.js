@@ -3,8 +3,8 @@ const router = express.Router();
 const flightGraph = require('../algorithms/graph/buildFlightGraph');
 const dijkstra = require('../algorithms/graph/dijkstra');
 const aStar = require('../algorithms/graph/aStar');
-const bfs = require('../../../algorithms/bfs');
-const dfs = require('../../../algorithms/dfs');
+const bfs = require('../../algorithms/bfs');
+const dfs = require('../../algorithms/dfs');
 const aviationService = require('../services/aviationService');
 
 // Simple Rate Limiter Middleware

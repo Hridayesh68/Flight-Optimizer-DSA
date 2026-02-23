@@ -40,6 +40,7 @@ class FlightGraph {
                     code: apt.code,
                     name: apt.name,
                     city: apt.city,
+                    state: apt.state,
                     country: apt.country,
                     lat: apt.lat,
                     lng: apt.lng
