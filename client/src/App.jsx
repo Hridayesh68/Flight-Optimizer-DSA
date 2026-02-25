@@ -11,7 +11,6 @@ import PlanFlight from './pages/PlanFlight';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import MyTrips from './components/Dashboard/MyTrips';
-import MyBookings from './components/Dashboard/MyBookings';
 
 // Icons
 import { IoAirplaneOutline, IoPersonCircleOutline, IoLogOutOutline } from 'react-icons/io5';
@@ -69,11 +68,9 @@ const DashboardLayout = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
       <div className="mb-8 border-b pb-4">
         <h1 className="text-3xl font-bold text-gray-900">Your Dashboard</h1>
-        <p className="text-gray-500">Manage your saved routes and active hotel bookings.</p>
+        <p className="text-gray-500">Manage your saved routes.</p>
       </div>
       <MyTrips />
-      <div className="my-12"></div>
-      <MyBookings />
     </div>
   );
 };

@@ -18,7 +18,7 @@ const seedData = async () => {
     await connectDB();
 
     try {
-        console.log('No static seeded data remains. Hotels and Attractions are now fetched globally in real-time via the OpenStreetMap Overpass and Nominatim APIs.');
+        console.log('No static seeded data remains. This application is now a dedicated Flight Route Optimizer.');
         process.exit();
     } catch (error) {
         console.error(error);
