@@ -160,7 +160,7 @@ const FlightSearchBox = () => {
     useEffect(() => {
         const fetchGraphAirports = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/graph/airports');
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/graph/airports`);
                 if (response.data && response.data.length > 0) {
                     setAirportsList(response.data);
                     // Optionally reset origin/destination if the current ones don't exist
@@ -190,7 +190,7 @@ const FlightSearchBox = () => {
         setVisualizedRoute(null);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/route', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/route`, {
                 origin,
                 destination,
                 algorithm,

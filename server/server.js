@@ -24,7 +24,9 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/trips', require('./routes/tripRoutes'));
 app.use('/api', require('./routes/algorithmRoutes'));
-
+app.get('/', (req, res) => {
+  res.send('Flight Optimizer API is running 🚀');
+});
 // Error Handler
 try {
     app.use(require('./middleware/errorHandler'));
