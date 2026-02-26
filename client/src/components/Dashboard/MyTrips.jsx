@@ -46,7 +46,7 @@ const MyTrips = () => {
                 {trips.map(trip => (
                     <div key={trip._id} className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-4">
-                            <h3 className="font-bold text-lg text-blue-700">{trip.name || "Untitled Trip"}</h3>
+                            <h3 className="font-bold text-lg text-blue-700">{trip.origin?.city} to {trip.destination?.city}</h3>
                             <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2 py-1 rounded-full border border-blue-200">
                                 {new Date(trip.createdAt).toLocaleDateString()}
                             </span>
@@ -55,20 +55,21 @@ const MyTrips = () => {
                         <div className="flex space-x-6 mb-4 text-sm text-gray-600">
                             <div className="flex items-center">
                                 <IoMapOutline className="mr-1 text-gray-400" />
-                                {trip.optimizedRoute.length} Stops
+                                {trip.path ? trip.path.length : 0} Stops
                             </div>
                             <div className="flex items-center">
                                 <IoTimeOutline className="mr-1 text-gray-400" />
-                                {formatDistance(trip.totalDistance)}
+                                {trip.metrics?.distance ? formatDistance(trip.metrics.distance) : 'N/A'}
                             </div>
                         </div>
 
                         <div className="text-sm">
+                            <h4 className="font-semibold text-gray-700 mb-2">Algorithm: {trip.algorithm}</h4>
                             <h4 className="font-semibold text-gray-700 mb-2">Route:</h4>
                             <div className="flex flex-wrap gap-2">
-                                {trip.optimizedRoute.map((city, idx) => (
+                                {trip.path && trip.path.map((loc, idx) => (
                                     <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md text-xs">
-                                        {idx + 1}. {city.name}
+                                        {idx + 1}. {loc.city || loc.name} ({loc.code})
                                     </span>
                                 ))}
                             </div>
