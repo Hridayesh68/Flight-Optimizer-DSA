@@ -1,3 +1,4 @@
+
 export const formatDistance = (distanceInKm) => {
     if (!distanceInKm) return '0 km';
     return `${distanceInKm.toLocaleString()} km`;

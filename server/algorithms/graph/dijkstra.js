@@ -1,45 +1,48 @@
 const MinHeap = require('../priorityQueue/MinHeap');
 
 /**
- * Dijkstra's Algorithm for Flight Networks (Adjacency List)
+ * Dijkstra's Algorithm to find shortest paths from a start node to an end node
+ * Optimizes for a specific weight field (distance, duration, price)
  * @param {Map} graphList - Adjacency list map of flights
  * @param {string} startNode - IATA code of source
  * @param {string} endNode - IATA code of destination
- * @param {string} weightField - 'distance', 'duration', or 'price'
- * @returns {Object} { path, totalWeight, distances, previous, visitedCount }
+ * @param {string} weightField - Field to optimize (distance, duration, price)
+ * @returns {Object} { path, visitedCount }
  */
 function dijkstra(graphList, startNode, endNode, weightField) {
+    let visitedCount = 0;
     const distances = new Map();
     const previous = new Map();
-    let visitedCount = 0;
+    const pq = new MinHeap();
 
-    // Initialize all nodes in map to Infinity
-    for (const [node] of graphList.entries()) {
+    // Initialize all distances to Infinity
+    for (const node of graphList.keys()) {
         distances.set(node, Infinity);
         previous.set(node, null);
     }
 
     distances.set(startNode, 0);
-    const pq = new MinHeap();
     pq.insert({ node: startNode, priority: 0 });
+
+    let found = false;
 
     while (!pq.isEmpty()) {
         const { node: u, priority: currentDist } = pq.extractMin();
         visitedCount++;
 
-        // Stop early if we reached destination (Dijkstra optimization)
         if (u === endNode) {
+            found = true;
             break;
         }
 
-        // If we extracted a stale path that is longer, ignore
+        // Optimization: If extracted distance is greater than known distance, skip
         if (currentDist > distances.get(u)) continue;
 
         const neighbors = graphList.get(u) || [];
         for (const edge of neighbors) {
             const v = edge.to;
-            const weight = edge[weightField]; // Dynamically pull distance, duration, or price
-
+            const weight = edge[weightField] || Infinity; // Ensure weight exists
+            
             const alt = distances.get(u) + weight;
             if (alt < distances.get(v)) {
                 distances.set(v, alt);
@@ -47,6 +50,10 @@ function dijkstra(graphList, startNode, endNode, weightField) {
                 pq.insert({ node: v, priority: alt });
             }
         }
+    }
+
+    if (!found) {
+        return { path: [], visitedCount };
     }
 
     // Reconstruct Route
@@ -57,16 +64,8 @@ function dijkstra(graphList, startNode, endNode, weightField) {
         curr = previous.get(curr);
     }
 
-    // Check if path is actually valid
-    if (path.length > 0 && path[0] !== startNode) {
-        return { path: [], totalWeight: 0, visitedCount };
-    }
-
     return {
         path,
-        totalWeight: distances.get(endNode),
-        distances,
-        previous,
         visitedCount
     };
 }

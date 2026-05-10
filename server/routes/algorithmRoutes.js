@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const flightGraph = require('../algorithms/graph/buildFlightGraph');
+const flightGraph = require('../algorithms/graph/buildGraph');
 const dijkstra = require('../algorithms/graph/dijkstra');
 const aStar = require('../algorithms/graph/aStar');
-const bfs = require('../../algorithms/bfs');
-const dfs = require('../../algorithms/dfs');
+const bfs = require('../algorithms/bfs');
+const dfs = require('../algorithms/dfs');
 const aviationService = require('../services/aviationService');
 
 // Simple Rate Limiter Middleware
@@ -40,7 +40,12 @@ router.use(rateLimiter);
 // @access  Public
 router.post('/route', async (req, res) => {
     console.log(`[Algorithm API] Request received: ${JSON.stringify(req.body)}`);
-    const { origin, destination, algorithm = 'dijkstra', optimizeBy = 'distance' } = req.body;
+    let { origin, destination, algorithm = 'dijkstra', optimizeBy = 'distance' } = req.body;
+
+    // Sanitize inputs
+    origin = origin?.trim().toUpperCase();
+    destination = destination?.trim().toUpperCase();
+    algorithm = algorithm?.toLowerCase();
 
     if (!origin || !destination) {
         return res.status(400).json({ message: 'Origin and destination are required.' });
@@ -66,15 +71,20 @@ router.post('/route', async (req, res) => {
     }
 
     try {
-        // Ensure graph is built before algorithm runs
         await flightGraph.buildGraph();
 
         const graphList = flightGraph.getGlobalGraph();
         console.log(`[Algorithm API] Graph size: ${graphList.size} nodes.`);
+        console.log(`[Algorithm API] Searching path from ${origin} to ${destination}`);
 
         // Verify nodes exist
-        if (!graphList.has(origin) || !graphList.has(destination)) {
-            return res.status(400).json({ message: 'Invalid airport IATA codes provided. Airport does not exist in graph.' });
+        if (!graphList.has(origin)) {
+            console.warn(`[Algorithm API] Origin ${origin} not found in graph`);
+            return res.status(400).json({ message: `Origin airport ${origin} does not exist in graph.` });
+        }
+        if (!graphList.has(destination)) {
+            console.warn(`[Algorithm API] Destination ${destination} not found in graph`);
+            return res.status(400).json({ message: `Destination airport ${destination} does not exist in graph.` });
         }
 
         console.log(`[Algorithm API] Running ${algorithm} optimizing for ${weightField}`);
@@ -227,6 +237,26 @@ router.get('/live-flights', async (req, res) => {
         res.status(200).json(response);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch live flights', error: error.message });
+    }
+});
+
+// @desc    Get graph status (debug)
+// @route   GET /api/graph/status
+// @access  Public
+router.get('/graph/status', async (req, res) => {
+    try {
+        await flightGraph.buildGraph();
+        const graphList = flightGraph.getGlobalGraph();
+        let edgeCount = 0;
+        graphList.forEach(neighbors => edgeCount += neighbors.length);
+        
+        res.status(200).json({
+            nodeCount: graphList.size,
+            edgeCount: edgeCount,
+            nodes: Array.from(graphList.keys())
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to get graph status', error: error.message });
     }
 });
 

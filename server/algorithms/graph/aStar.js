@@ -1,88 +1,94 @@
 const MinHeap = require('../priorityQueue/MinHeap');
 
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the Earth in km
+// Helper to calculate Haversine distance between two coordinates
+function calculateHaversine(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 }
 
-function getHeuristic(nodeStr, goalNodeStr, nodesMap, weightField) {
-    if (!nodesMap) return 0; // Fallback if no map is provided
-
-    const currentNode = nodesMap.get(nodeStr);
-    const goalNode = nodesMap.get(goalNodeStr);
-
-    if (!currentNode || !goalNode) return 0;
-
-    const distKm = haversineDistance(currentNode.lat, currentNode.lng, goalNode.lat, goalNode.lng);
-
-    // Convert heuristic based on the weightField optimization to remain admissible (never overestimate).
-    if (weightField === 'distance') return distKm;
-    if (weightField === 'duration') return (distKm / 1000) * 60; // Max speed 1000 km/h: underestimate time
-    if (weightField === 'price') return distKm * 0.05; // Base price is 50 + 0.10*dist, so 0.05*dist is safe underestimate
-
-    return distKm;
-}
-
 /**
- * A* algorithm implementation for flight networking.
- * f(n) = g(n) + h(n)
+ * A* (A-Star) Algorithm for Flight Networks
+ * @param {Map} graphList - Adjacency list map of flights
+ * @param {string} startNode - IATA code of source
+ * @param {string} endNode - IATA code of destination
+ * @param {string} weightField - 'distance', 'duration', or 'price'
+ * @param {Map} nodesMap - Map of airport metadata
+ * @returns {Object} { path, visitedCount }
  */
 function aStar(graphList, startNode, endNode, weightField, nodesMap) {
-    const gScore = new Map();
+    const distances = new Map();
     const previous = new Map();
     let visitedCount = 0;
 
+    // Get target coordinates for heuristic
+    const targetAirport = nodesMap.get(endNode);
+
+    // Initialize all nodes in map to Infinity
     for (const [node] of graphList.entries()) {
-        gScore.set(node, Infinity);
+        distances.set(node, Infinity);
         previous.set(node, null);
     }
 
-    gScore.set(startNode, 0);
-
+    distances.set(startNode, 0);
     const pq = new MinHeap();
-    const startH = getHeuristic(startNode, endNode, nodesMap, weightField);
-    pq.insert({ node: startNode, priority: startH });
 
-    const closedSet = new Set();
+    // Define Heuristic function dynamically based on weightType
+    const heuristic = (nodeCode) => {
+        // If optimizing by price, we don't have a reliable geographic heuristic, so A* degrades to Dijkstra
+        if (weightField === 'price' || !targetAirport) return 0;
+
+        const currentAirport = nodesMap.get(nodeCode);
+        if (!currentAirport) return 0;
+
+        const distanceKm = calculateHaversine(
+            currentAirport.lat, currentAirport.lng,
+            targetAirport.lat, targetAirport.lng
+        );
+
+        if (weightField === 'distance') return distanceKm;
+        if (weightField === 'duration') return distanceKm / 15; // Rough estimate of 900km/h (15km/min)
+        return 0;
+    };
+
+    pq.insert({ node: startNode, priority: 0 + heuristic(startNode) });
+
+    let found = false;
 
     while (!pq.isEmpty()) {
-        const { node: u, priority: currentF } = pq.extractMin();
-
-        // Prevent duplicate evaluations of the same node
-        if (closedSet.has(u)) continue;
-        closedSet.add(u);
-
+        const { node: u } = pq.extractMin();
         visitedCount++;
 
         if (u === endNode) {
+            found = true;
             break;
         }
-
-        const currentGScore = gScore.get(u);
 
         const neighbors = graphList.get(u) || [];
         for (const edge of neighbors) {
             const v = edge.to;
-            const weight = edge[weightField];
+            const weight = edge[weightField] || Infinity;
 
-            const tentative_gScore = currentGScore + weight;
-
-            if (tentative_gScore < gScore.get(v)) {
+            const alt = distances.get(u) + weight;
+            if (alt < distances.get(v)) {
+                distances.set(v, alt);
                 previous.set(v, u);
-                gScore.set(v, tentative_gScore);
-
-                const fScore = tentative_gScore + getHeuristic(v, endNode, nodesMap, weightField);
-                pq.insert({ node: v, priority: fScore });
+                pq.insert({ node: v, priority: alt + heuristic(v) });
             }
         }
     }
 
+    if (!found) {
+        return { path: [], visitedCount };
+    }
+
+    // Reconstruct Route
     const path = [];
     let curr = endNode;
     while (curr) {
@@ -90,13 +96,8 @@ function aStar(graphList, startNode, endNode, weightField, nodesMap) {
         curr = previous.get(curr);
     }
 
-    if (path.length > 0 && path[0] !== startNode) {
-        return { path: [], totalWeight: 0, visitedCount };
-    }
-
     return {
         path,
-        totalWeight: gScore.get(endNode),
         visitedCount
     };
 }
