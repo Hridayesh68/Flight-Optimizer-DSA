@@ -9,36 +9,22 @@ const aviationService = require('../services/aviationService');
 
 // Simple Rate Limiter Middleware
 const rateLimitMap = new Map();
+const RATE_LIMIT_MS = 1000; // 1 second per search
+
 const rateLimiter = (req, res, next) => {
     const ip = req.ip;
     const now = Date.now();
-    const windowMs = 60 * 1000; // 1 minute
-    const maxRequests = 30; // 30 requests per minute
-
-    if (!rateLimitMap.has(ip)) {
-        rateLimitMap.set(ip, { count: 1, startTime: now });
-    } else {
-        const record = rateLimitMap.get(ip);
-        if (now - record.startTime > windowMs) {
-            record.count = 1;
-            record.startTime = now;
-        } else {
-            record.count++;
-            if (record.count > maxRequests) {
-                return res.status(429).json({ message: 'Too many requests, please try again later.' });
-            }
-        }
+    if (rateLimitMap.has(ip) && now - rateLimitMap.get(ip) < RATE_LIMIT_MS) {
+        return res.status(429).json({ message: 'Please wait before searching again.' });
     }
+    rateLimitMap.set(ip, now);
     next();
 };
 
-// Apply rate limiting to all algorithm routes
-router.use(rateLimiter);
-
-// @desc    Run pathfinding algorithm for flights
+// @desc    Calculate optimal flight route
 // @route   POST /api/route
 // @access  Public
-router.post('/route', async (req, res) => {
+router.post('/route', rateLimiter, async (req, res) => {
     console.log(`[Algorithm API] Request received: ${JSON.stringify(req.body)}`);
     let { origin, destination, algorithm = 'dijkstra', optimizeBy = 'distance' } = req.body;
 
@@ -51,129 +37,67 @@ router.post('/route', async (req, res) => {
         return res.status(400).json({ message: 'Origin and destination are required.' });
     }
 
-    if (origin === destination) {
-        return res.status(400).json({ message: 'Origin and destination cannot be the same.' });
-    }
-
     const validWeights = {
         'distance': 'distance',
         'duration': 'duration',
         'cost': 'price'
     };
 
-    const weightField = validWeights[optimizeBy];
-    if (!weightField) {
-        return res.status(400).json({ message: 'Invalid optimizeBy field provided. Must be distance, duration, or cost.' });
-    }
-
-    if (!['dijkstra', 'astar', 'bfs', 'dfs', 'compare'].includes(algorithm)) {
-        return res.status(400).json({ message: 'Invalid algorithm selected. Must be dijkstra, astar, bfs, dfs, or compare.' });
-    }
+    const weightField = validWeights[optimizeBy] || 'distance';
 
     try {
+        // Ensure graph is built before algorithm runs
         await flightGraph.buildGraph();
 
         const graphList = flightGraph.getGlobalGraph();
-        console.log(`[Algorithm API] Graph size: ${graphList.size} nodes.`);
-        console.log(`[Algorithm API] Searching path from ${origin} to ${destination}`);
 
         // Verify nodes exist
         if (!graphList.has(origin)) {
-            console.warn(`[Algorithm API] Origin ${origin} not found in graph`);
             return res.status(400).json({ message: `Origin airport ${origin} does not exist in graph.` });
         }
         if (!graphList.has(destination)) {
-            console.warn(`[Algorithm API] Destination ${destination} not found in graph`);
             return res.status(400).json({ message: `Destination airport ${destination} does not exist in graph.` });
         }
 
         console.log(`[Algorithm API] Running ${algorithm} optimizing for ${weightField}`);
 
-        // Helper to run and compile an algorithm
-        const runAlgorithm = (algName) => {
-            const startTime = performance.now();
-            let result = null;
-
-            if (algName === 'dijkstra') result = dijkstra(graphList, origin, destination, weightField);
-            else if (algName === 'astar') result = aStar(graphList, origin, destination, weightField, flightGraph.nodes);
-            else if (algName === 'bfs') result = bfs(graphList, origin, destination);
-            else if (algName === 'dfs') result = dfs(graphList, origin, destination);
-
-            const endTime = performance.now();
-            const executionTimeMs = (endTime - startTime).toFixed(3);
-
-            if (!result || !result.path || result.path.length === 0) {
-                return null;
+        const runAlgorithm = async (algName, start, end, field) => {
+            let result;
+            if (algName === 'dijkstra') result = dijkstra(graphList, start, end, field);
+            else if (algName === 'astar') result = aStar(graphList, start, end, field, flightGraph.nodes);
+            else if (algName === 'bfs') result = bfs(graphList, start, end);
+            else if (algName === 'dfs') result = dfs(graphList, start, end);
+            
+            if (result && result.path && result.path.length > 0) {
+                // Enrich path with metadata
+                return {
+                    algorithm: algName,
+                    ...result,
+                    totalDistance: result.totalDistance || 0,
+                    totalDuration: result.totalDuration || 0,
+                    totalCost: result.totalCost || 0,
+                    executionTime: result.executionTime || "0ms",
+                    airlinesUsed: result.airlinesUsed || []
+                };
             }
-
-            let totalDistance = 0;
-            let totalDuration = 0;
-            let totalCost = 0;
-            let airlinesUsed = new Set();
-            let nodesVisited = result.visitedCount || 0;
-
-            // Haversine fallback helper
-            const R = 6371;
-            const haversineDist = (lat1, lon1, lat2, lon2) => {
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            };
-
-            for (let i = 0; i < result.path.length - 1; i++) {
-                const currentCode = result.path[i];
-                const nextCode = result.path[i + 1];
-                const edges = graphList.get(currentCode) || [];
-                const flightTaken = edges.find(e => e.to === nextCode);
-
-                const srcNode = flightGraph.nodes.get(currentCode);
-                const destNode = flightGraph.nodes.get(nextCode);
-
-                if (flightTaken) {
-                    if (flightTaken.distance) {
-                        totalDistance += flightTaken.distance;
-                        totalDuration += flightTaken.duration;
-                        totalCost += flightTaken.price;
-                    } else if (srcNode && destNode) {
-                        // Dynamically calculate fallback metrics for synthetic edges that lack explicit payload
-                        const hDist = Math.round(haversineDist(srcNode.lat, srcNode.lng, destNode.lat, destNode.lng));
-                        totalDistance += hDist;
-                        totalDuration += Math.round((hDist / 800) * 60) + 30;
-                        totalCost += Math.round((hDist * 0.10) + 50);
-                    }
-                    if (flightTaken.airline && flightTaken.airline !== 'UNK' && flightTaken.airline !== 'DENSE') {
-                        airlinesUsed.add(flightTaken.airline);
-                    }
-                }
-            }
-
-            return {
-                algorithm: algName,
-                path: result.path,
-                totalDistance,
-                totalDuration,
-                totalCost,
-                nodesVisited,
-                executionTime: `${executionTimeMs}ms`,
-                airlinesUsed: Array.from(airlinesUsed)
-            };
+            return null;
         };
 
         if (algorithm === 'compare') {
-            const results = [
-                runAlgorithm('bfs'),
-                runAlgorithm('dfs'),
-                runAlgorithm('dijkstra'),
-                runAlgorithm('astar')
-            ].filter(r => r !== null);
-
-            if (results.length === 0) {
+            const results = await Promise.all([
+                runAlgorithm('dijkstra', origin, destination, weightField),
+                runAlgorithm('astar', origin, destination, weightField),
+                runAlgorithm('bfs', origin, destination, weightField),
+                runAlgorithm('dfs', origin, destination, weightField)
+            ]);
+            
+            const validResults = results.filter(r => r !== null);
+            if (validResults.length === 0) {
                 return res.status(404).json({ message: 'No flight route possible between these airports.' });
             }
-            return res.status(200).json(results);
+            return res.status(200).json(validResults);
         } else {
-            const responseObj = runAlgorithm(algorithm);
+            const responseObj = await runAlgorithm(algorithm, origin, destination, weightField);
             if (!responseObj) {
                 return res.status(404).json({ message: 'No flight route possible between these airports.' });
             }
@@ -181,68 +105,25 @@ router.post('/route', async (req, res) => {
         }
 
     } catch (error) {
-        console.error("[Algorithm API] Error:", error);
-        res.status(500).json({ message: 'Algorithm execution failed', error: error.message });
+        console.error('Routing error:', error);
+        res.status(500).json({ message: 'Internal server error during route optimization.', error: error.message });
     }
 });
 
-// @desc    Get all airport metadata
-// @route   GET /api/airports
-// @access  Public
-router.get('/airports', async (req, res) => {
-    try {
-        const response = await aviationService.getAirports(req.query);
-        res.status(200).json(response);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch airports', error: error.message });
-    }
-});
-
-// @desc    Get graph airports (all nodes in the current adjacency list)
+// @desc    Get all available airports in the graph
 // @route   GET /api/graph/airports
-// @access  Public
 router.get('/graph/airports', async (req, res) => {
     try {
         await flightGraph.buildGraph();
         const nodes = Array.from(flightGraph.nodes.values());
-        // Sort alphabetically by city/name for the dropdown
-        nodes.sort((a, b) => (a.city || a.name).localeCompare(b.city || b.name));
         res.status(200).json(nodes);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch graph airports', error: error.message });
-    }
-});
-
-// @desc    Get airlines metadata
-// @route   GET /api/airlines
-// @access  Public
-router.get('/airlines', async (req, res) => {
-    try {
-        const response = await aviationService.getAirlines(req.query);
-        res.status(200).json(response);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch airlines', error: error.message });
-    }
-});
-
-// @desc    Get live flights
-// @route   GET /api/live-flights
-// @access  Public
-router.get('/live-flights', async (req, res) => {
-    try {
-        const airport = req.query.airport;
-        const params = airport ? { arr_iata: airport } : {};
-        // You could also use dep_iata depending on the desired feature
-        const response = await aviationService.getFlights(params);
-        res.status(200).json(response);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch live flights', error: error.message });
+        res.status(500).json({ message: 'Failed to fetch airports from graph.' });
     }
 });
 
 // @desc    Get graph status (debug)
 // @route   GET /api/graph/status
-// @access  Public
 router.get('/graph/status', async (req, res) => {
     try {
         await flightGraph.buildGraph();

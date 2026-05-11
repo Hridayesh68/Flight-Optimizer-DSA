@@ -20,30 +20,29 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
  * @param {string} endNode - IATA code of destination
  * @param {string} weightField - 'distance', 'duration', or 'price'
  * @param {Map} nodesMap - Map of airport metadata
- * @returns {Object} { path, visitedCount }
+ * @returns {Object} { path, visitedCount, totalDistance, totalDuration, totalCost, airlinesUsed }
  */
 function aStar(graphList, startNode, endNode, weightField, nodesMap) {
+    const startTime = process.hrtime();
     const distances = new Map();
     const previous = new Map();
+    const edgeUsed = new Map();
     let visitedCount = 0;
 
-    // Get target coordinates for heuristic
     const targetAirport = nodesMap.get(endNode);
 
-    // Initialize all nodes in map to Infinity
     for (const [node] of graphList.entries()) {
         distances.set(node, Infinity);
         previous.set(node, null);
     }
 
+    if (!distances.has(startNode)) return { path: [], visitedCount: 0 };
+
     distances.set(startNode, 0);
     const pq = new MinHeap();
 
-    // Define Heuristic function dynamically based on weightType
     const heuristic = (nodeCode) => {
-        // If optimizing by price, we don't have a reliable geographic heuristic, so A* degrades to Dijkstra
         if (weightField === 'price' || !targetAirport) return 0;
-
         const currentAirport = nodesMap.get(nodeCode);
         if (!currentAirport) return 0;
 
@@ -53,7 +52,7 @@ function aStar(graphList, startNode, endNode, weightField, nodesMap) {
         );
 
         if (weightField === 'distance') return distanceKm;
-        if (weightField === 'duration') return distanceKm / 15; // Rough estimate of 900km/h (15km/min)
+        if (weightField === 'duration') return distanceKm / 15; // 900km/h
         return 0;
     };
 
@@ -79,6 +78,7 @@ function aStar(graphList, startNode, endNode, weightField, nodesMap) {
             if (alt < distances.get(v)) {
                 distances.set(v, alt);
                 previous.set(v, u);
+                edgeUsed.set(v, edge);
                 pq.insert({ node: v, priority: alt + heuristic(v) });
             }
         }
@@ -88,17 +88,37 @@ function aStar(graphList, startNode, endNode, weightField, nodesMap) {
         return { path: [], visitedCount };
     }
 
-    // Reconstruct Route
+    // Reconstruct
     const path = [];
+    const airlines = new Set();
+    let totalDist = 0;
+    let totalDur = 0;
+    let totalPrice = 0;
+    
     let curr = endNode;
     while (curr) {
         path.unshift(curr);
+        const edge = edgeUsed.get(curr);
+        if (edge) {
+            totalDist += edge.distance || 0;
+            totalDur += edge.duration || 0;
+            totalPrice += edge.price || 0;
+            if (edge.airline) airlines.add(edge.airline);
+        }
         curr = previous.get(curr);
     }
 
+    const endTime = process.hrtime(startTime);
+    const executionTime = `${(endTime[0] * 1000 + endTime[1] / 1000000).toFixed(3)}ms`;
+
     return {
         path,
-        visitedCount
+        visitedCount,
+        totalDistance: totalDist,
+        totalDuration: totalDur,
+        totalCost: totalPrice,
+        airlinesUsed: Array.from(airlines),
+        executionTime
     };
 }
 

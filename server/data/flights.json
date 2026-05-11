@@ -238,5 +238,85 @@
         "duration_min": 710,
         "price_usd": 860,
         "airline": "Air France"
+    },
+    {
+        "source": "DEL",
+        "target": "ATQ",
+        "distance_km": 450,
+        "duration_min": 60,
+        "price_usd": 40,
+        "airline": "Air India"
+    },
+    {
+        "source": "DEL",
+        "target": "HYD",
+        "distance_km": 1250,
+        "duration_min": 130,
+        "price_usd": 85,
+        "airline": "IndiGo"
+    },
+    {
+        "source": "DEL",
+        "target": "BLR",
+        "distance_km": 1740,
+        "duration_min": 165,
+        "price_usd": 110,
+        "airline": "Air India"
+    },
+    {
+        "source": "BOM",
+        "target": "HYD",
+        "distance_km": 620,
+        "duration_min": 85,
+        "price_usd": 65,
+        "airline": "Vistara"
+    },
+    {
+        "source": "BOM",
+        "target": "BLR",
+        "distance_km": 840,
+        "duration_min": 100,
+        "price_usd": 75,
+        "airline": "Akasa Air"
+    },
+    {
+        "source": "BOM",
+        "target": "GOI",
+        "distance_km": 440,
+        "duration_min": 70,
+        "price_usd": 55,
+        "airline": "IndiGo"
+    },
+    {
+        "source": "BOM",
+        "target": "PNQ",
+        "distance_km": 150,
+        "duration_min": 45,
+        "price_usd": 40,
+        "airline": "Air India"
+    },
+    {
+        "source": "DEL",
+        "target": "AMD",
+        "distance_km": 775,
+        "duration_min": 95,
+        "price_usd": 70,
+        "airline": "SpiceJet"
+    },
+    {
+        "source": "MAA",
+        "target": "DEL",
+        "distance_km": 1760,
+        "duration_min": 170,
+        "price_usd": 120,
+        "airline": "IndiGo"
+    },
+    {
+        "source": "CCU",
+        "target": "DEL",
+        "distance_km": 1300,
+        "duration_min": 135,
+        "price_usd": 105,
+        "airline": "SpiceJet"
     }
 ]
