@@ -36,17 +36,17 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    // Use the Jenkins credentials for kubeconfig
-                    configFileProvider([configFile(fileId: 'k8s-config', variable: 'KUBECONFIG')]) {
-                        sh "kubectl --kubeconfig=${KUBECONFIG} apply -f k8s/backend-deployment.yaml"
-                        sh "kubectl --kubeconfig=${KUBECONFIG} apply -f k8s/frontend-deployment.yaml"
-                        // Force update pods with new image
-                        sh "kubectl --kubeconfig=${KUBECONFIG} rollout restart deployment/flight-optimizer-backend"
-                        sh "kubectl --kubeconfig=${KUBECONFIG} rollout restart deployment/flight-optimizer-frontend"
-                    }
-                }
+    steps {
+        script {
+            withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+
+                sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/backend-deployment.yaml"
+
+                sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/frontend-deployment.yaml"
+
+                sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-backend"
+
+                sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-frontend"
             }
         }
     }
