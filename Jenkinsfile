@@ -9,9 +9,11 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Hridayesh68/Flight-Optimizer-DSA.git'
+                git branch: 'main',
+                    url: 'https://github.com/Hridayesh68/Flight-Optimizer-DSA.git'
             }
         }
 
@@ -36,25 +38,32 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-    steps {
-        script {
-            withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+            steps {
+                script {
 
-                sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/backend-deployment.yaml"
+                    withCredentials([
+                        file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')
+                    ]) {
 
-                sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/frontend-deployment.yaml"
+                        sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/backend-deployment.yaml"
 
-                sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-backend"
+                        sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/frontend-deployment.yaml"
 
-                sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-frontend"
+                        sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-backend"
+
+                        sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-frontend"
+                    }
+                }
             }
         }
     }
 
     post {
+
         success {
             echo 'Deployment successful! 🚀'
         }
+
         failure {
             echo 'Deployment failed. Check logs. ❌'
         }
