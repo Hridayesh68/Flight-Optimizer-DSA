@@ -35,18 +35,34 @@ pipeline {
             }
         }
 
+        stage('Create Kubernetes Secret') {
+            steps {
+                script {
+                    withCredentials([
+                        file(credentialsId: 'backend-env', variable: 'ENV_FILE'),
+                        file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')
+                    ]) {
+                        sh '''
+                        kubectl --kubeconfig=$KUBECONFIG delete secret backend-secret --ignore-not-found
+                        kubectl --kubeconfig=$KUBECONFIG create secret generic backend-secret --from-env-file=$ENV_FILE
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
-    steps {
-        script {
-            withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
-
-                sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/backend-deployment.yaml"
-
-                sh "kubectl --kubeconfig=$KUBECONFIG apply -f k8s/frontend-deployment.yaml"
-
-                sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-backend"
-
-                sh "kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-frontend"
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        kubectl --kubeconfig=$KUBECONFIG apply -f k8s/backend-deployment.yaml
+                        kubectl --kubeconfig=$KUBECONFIG apply -f k8s/frontend-deployment.yaml
+                        kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-backend
+                        kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-frontend
+                        '''
+                    }
+                }
             }
         }
     }

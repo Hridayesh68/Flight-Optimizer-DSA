@@ -19,14 +19,10 @@ spec:
         image: hridayesh68/flight-optimizer-dsa-backend:latest
         ports:
         - containerPort: 5000
-        env:
-        - name: MONGO_URI
-          valueFrom:
-            secretKeyRef:
-              name: flight-db-secret
-              key: mongo-uri
-        - name: PORT
-          value: "5000"
+        envFrom:
+        - secretRef:
+            name: backend-secret
+
 ---
 apiVersion: v1
 kind: Service
