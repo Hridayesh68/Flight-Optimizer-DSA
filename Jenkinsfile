@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    
+    triggers {
+        githubPush()
+    }
+
 
     environment {
         DOCKER_HUB_USER = 'hridayesh68'
