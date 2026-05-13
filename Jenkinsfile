@@ -18,11 +18,17 @@ pipeline {
         stage('Build Images') {
             steps {
                 script {
-                    sh "docker build -t ${BACKEND_IMAGE}:latest ./server"
-                    sh "docker build -t ${FRONTEND_IMAGE}:latest ./client"
+                    withCredentials([file(credentialsId: 'backend-env', variable: 'ENV_FILE')]) {
+                        // Copy the environment file into the client directory so Vite can find it
+                        sh "cp $ENV_FILE ./client/.env"
+                        
+                        sh "docker build -t ${BACKEND_IMAGE}:latest ./server"
+                        sh "docker build -t ${FRONTEND_IMAGE}:latest ./client"
+                    }
                 }
             }
         }
+
 
         stage('Push to Docker Hub') {
             steps {
