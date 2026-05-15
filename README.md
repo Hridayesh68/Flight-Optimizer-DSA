@@ -89,3 +89,27 @@ flight-optimizer/
 ```bash
 git clone https://github.com/hridayesh68/flight-optimizer.git
 cd flight-optimizer/
+```
+
+---
+
+## 🚀 CI/CD & Deployment
+
+The project features a fully automated CI/CD pipeline built with **Jenkins** and **Kubernetes**.
+
+### Automation Highlights:
+- **Parallel Builds**: Optimized Docker builds for speed.
+- **Automated Secret Management**: Secure injection of environment variables.
+- **Zero-Downtime Rollouts**: Automated `rollout restart` to ensure the latest code is always live.
+- **Health Verification**: Automated checks for pod and service availability.
+
+For more details on the deployment architecture, see [CI_CD_DOCUMENTATION.md](./CI_CD_DOCUMENTATION.md).
+
+---
+
+## ✅ Recent Improvements & Bug Fixes
+
+- **Fixed "Double /api" Bug**: Centralized API logic to prevent redundant path prefixes and resolve 404 errors.
+- **Improved Secret Injection**: Transitioned to Jenkins `writeFile` for robust environment variable management.
+- **Enhanced Observability**: Added a `Verify Deployment` stage to the pipeline for immediate feedback on deployment health.
+- **Optimized Build Process**: Leveraged parallel processing and explicit directory contexts in Jenkins.
