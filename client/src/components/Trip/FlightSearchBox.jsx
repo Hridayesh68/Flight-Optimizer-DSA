@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { TripContext } from '../../context/TripContext';
-import axios from 'axios';
+import api from '../../services/api';
 import { IoPlayOutline, IoAirplaneOutline, IoWalletOutline, IoTimeOutline } from 'react-icons/io5';
 
 // Mock list of airports to save an API call (matches server/data/airports.json)
@@ -160,7 +160,7 @@ const FlightSearchBox = () => {
     useEffect(() => {
         const fetchGraphAirports = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/graph/airports`);
+                const response = await api.get('/graph/airports');
                 if (response.data && response.data.length > 0) {
                     setAirportsList(response.data);
                     // Optionally reset origin/destination if the current ones don't exist
@@ -190,7 +190,7 @@ const FlightSearchBox = () => {
         setVisualizedRoute(null);
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/route`, {
+            const response = await api.post('/route', {
                 origin,
                 destination,
                 algorithm,

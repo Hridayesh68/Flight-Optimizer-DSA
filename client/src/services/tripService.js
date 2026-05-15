@@ -1,28 +1,19 @@
-import axios from 'axios';
+import api from './api';
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/trips`;
-
-const getAuthHeaders = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return {
-        headers: {
-            Authorization: `Bearer ${user?.token}`,
-        },
-    };
-};
+const API_URL = '/trips';
 
 const optimizeTrip = async (cities) => {
-    const response = await axios.post(`${API_URL}/optimize`, { cities });
+    const response = await api.post(`${API_URL}/optimize`, { cities });
     return response.data;
 };
 
 const saveTrip = async (tripData) => {
-    const response = await axios.post(API_URL, tripData, getAuthHeaders());
+    const response = await api.post(API_URL, tripData);
     return response.data;
 };
 
 const getSavedTrips = async () => {
-    const response = await axios.get(API_URL, getAuthHeaders());
+    const response = await api.get(API_URL);
     return response.data;
 };
 

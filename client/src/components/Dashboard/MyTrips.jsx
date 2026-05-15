@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { formatDistance } from '../../utils/distanceFormatter';
 import { IoMapOutline, IoTimeOutline } from 'react-icons/io5';
@@ -12,8 +12,7 @@ const MyTrips = () => {
     useEffect(() => {
         const fetchTrips = async () => {
             try {
-                const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/trips`, config);
+                const res = await api.get('/trips');
                 setTrips(res.data);
             } catch (err) {
                 console.error("Failed to fetch trips", err);
