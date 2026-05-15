@@ -79,6 +79,10 @@ pipeline {
                         sh '''
                         kubectl --kubeconfig=$KUBECONFIG apply -f k8s/backend-deployment.yaml
                         kubectl --kubeconfig=$KUBECONFIG apply -f k8s/frontend-deployment.yaml
+                        
+                        echo "Restarting deployments to pick up new images..."
+                        kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-backend
+                        kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/flight-optimizer-frontend
                         '''
                     }
                 }
