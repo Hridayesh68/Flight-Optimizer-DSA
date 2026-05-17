@@ -1,4 +1,5 @@
 # ✈️ Flight Route Optimizer
+Deployed in EC2 http://44.204.70.162/
 
 A full-stack aviation routing platform that finds the most optimal flight route between airports using advanced graph algorithms such as **Dijkstra, BFS, and DFS**.
 
